@@ -8,7 +8,9 @@ namespace MappingDemo.MapperProfile
     {
         public MapperProfile()
         {
-            CreateMap<EmployeeDTO, Employee>();
+            CreateMap<EmployeeDTO, Employee>()
+                  .ForMember(dest => dest.EmployeeDetails, opt => opt.MapFrom(src => src.employeeDetailsDTOs))
+            .ForMember(dest => dest.employeeAddresses, opt => opt.MapFrom(src => src.employeeAddressDTOs)); ;
             CreateMap<Employee, EmployeeDTO>()
             .ForMember(dest => dest.employeeDetailsDTOs, opt => opt.MapFrom(src => src.EmployeeDetails))
             .ForMember(dest => dest.employeeAddressDTOs, opt => opt.MapFrom(src => src.employeeAddresses));

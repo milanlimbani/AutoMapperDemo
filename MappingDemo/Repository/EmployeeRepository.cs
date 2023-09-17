@@ -17,41 +17,41 @@ namespace MappingDemo.Repository
         }
         public async Task<EmployeeDTO> AddEmployeeAsync(EmployeeDTO employeeDto)
         {
-            //Employee employee = _mappers.Map<EmployeeDTO, Employee>(employeeDto);
-            //var result = _dataContext.Employees.Add(employee);
-            //await _dataContext.SaveChangesAsync();
-            //Employee addedEmployee = result.Entity;
-            //return _mappers.Map<Employee, EmployeeDTO>(addedEmployee);
             Employee employee = _mappers.Map<EmployeeDTO, Employee>(employeeDto);
-
-            // Handle null or empty EmployeeDetails
-            if (employeeDto.employeeDetailsDTOs != null && employeeDto.employeeDetailsDTOs.Any())
-            {
-                foreach (var detailsDto in employeeDto.employeeDetailsDTOs)
-                {
-                    var details = _mappers.Map<EmployeeDetailsDTO, EmployeeDetails>(detailsDto);
-                    employee.EmployeeDetails.Add(details);
-                }
-            }
-
-            // Handle null or empty EmployeeAddress
-            if (employeeDto.employeeAddressDTOs != null && employeeDto.employeeAddressDTOs.Any())
-            {
-                foreach (var addressDto in employeeDto.employeeAddressDTOs)
-                {
-                    var address = _mappers.Map<EmployeeAddressDTO, EmployeeAddress>(addressDto);
-                    employee.employeeAddresses.Add(address);
-                }
-            }
-
             var result = _dataContext.Employees.Add(employee);
             await _dataContext.SaveChangesAsync();
-            //  Employee addedEmployee = result.Entity;
-            EmployeeDTO addedEmployeeDto = _mappers.Map<Employee, EmployeeDTO>(result.Entity);
-            addedEmployeeDto.employeeDetailsDTOs = employeeDto.employeeDetailsDTOs;
-            addedEmployeeDto.employeeAddressDTOs = employeeDto.employeeAddressDTOs;
+            Employee addedEmployee = result.Entity;
+            return _mappers.Map<Employee, EmployeeDTO>(addedEmployee);
+            //Employee employee = _mappers.Map<EmployeeDTO, Employee>(employeeDto);
 
-            return addedEmployeeDto;
+            //// Handle null or empty EmployeeDetails
+            //if (employeeDto.employeeDetailsDTOs != null && employeeDto.employeeDetailsDTOs.Any())
+            //{
+            //    foreach (var detailsDto in employeeDto.employeeDetailsDTOs)
+            //    {
+            //        var details = _mappers.Map<EmployeeDetailsDTO, EmployeeDetails>(detailsDto);
+            //        employee.EmployeeDetails.Add(details);
+            //    }
+            //}
+
+            //// Handle null or empty EmployeeAddress
+            //if (employeeDto.employeeAddressDTOs != null && employeeDto.employeeAddressDTOs.Any())
+            //{
+            //    foreach (var addressDto in employeeDto.employeeAddressDTOs)
+            //    {
+            //        var address = _mappers.Map<EmployeeAddressDTO, EmployeeAddress>(addressDto);
+            //        employee.employeeAddresses.Add(address);
+            //    }
+            //}
+
+            //var result = _dataContext.Employees.Add(employee);
+            //await _dataContext.SaveChangesAsync();
+            ////  Employee addedEmployee = result.Entity;
+            //EmployeeDTO addedEmployeeDto = _mappers.Map<Employee, EmployeeDTO>(result.Entity);
+            //addedEmployeeDto.employeeDetailsDTOs = employeeDto.employeeDetailsDTOs;
+            //addedEmployeeDto.employeeAddressDTOs = employeeDto.employeeAddressDTOs;
+
+            //return addedEmployeeDto;
 
         }
 
