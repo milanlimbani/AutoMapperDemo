@@ -39,7 +39,8 @@ namespace MappingDemo.Controllers
         [Route("UpdateEmployees")]
         public async Task<int> UpdateEmployee(Employee employee)
         {
-            var employeeReturn = await _mediator.Send(new UpdateEmployeeCommand(employee.Id,employee.Name, employee.Age, employee.Address, employee.MobileNumber, employee.EmployeeDetails.ToList(), employee.employeeAddresses.ToList()));
+            var employeeReturn = await _mediator.Send(new UpdateEmployeeCommand(employee.Id,employee.Name, employee.Age,
+                employee.Address, employee.MobileNumber, employee.EmployeeDetails.ToList(), employee.employeeAddresses.ToList()));
             return employeeReturn;
         }
         [HttpPost]
