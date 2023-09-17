@@ -7,7 +7,7 @@
         public int Age { get; set; }
         public string Address { get; set; }
         public string MobileNumber { get; set; }
-        public ICollection<EmployeeDetails> EmployeeDetails { get; set; } = new List<EmployeeDetails>();
-        public ICollection<EmployeeAddress> employeeAddresses { get; set; } = new List<EmployeeAddress>();
+        public ICollection<EmployeeDetails> EmployeeDetails { get; set; } 
+        public ICollection<EmployeeAddress> employeeAddresses { get; set; } 
     }
 }

@@ -7,7 +7,9 @@
         public int Age { get; set; }
         public string Address { get; set; }
         public string MobileNumber { get; set; }
+        public string City { get; set; }
         public List<EmployeeAddressDTO> employeeAddressDTOs { get; set; }
         public List<EmployeeDetailsDTO> employeeDetailsDTOs { get; set; }
     }
 }
+
