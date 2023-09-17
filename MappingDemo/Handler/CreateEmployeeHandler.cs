@@ -1,4 +1,5 @@
-﻿using MappingDemo.Command;
+﻿using AutoMapper;
+using MappingDemo.Command;
 using MappingDemo.Interface;
 using MappingDemo.Models;
 using MappingDemo.Repository;
@@ -6,25 +7,21 @@ using MediatR;
 
 namespace MappingDemo.Handler
 {
-    public class CreateEmployeeHandler:IRequestHandler<CreateEmployeeCommand,Employee>
+    public class CreateEmployeeHandler : IRequestHandler<CreateEmployeeCommand, EmployeeDTO>
     {
         private readonly EmployeeRepository _employeeRepository;
-        public CreateEmployeeHandler(EmployeeRepository employeeRepository)
+        private readonly IMapper _mapper;
+
+        public CreateEmployeeHandler(EmployeeRepository employeeRepository, IMapper mapper)
         {
             _employeeRepository = employeeRepository;
+            _mapper = mapper;
         }
-        public async Task<Employee> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
+        public async Task<EmployeeDTO> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
         {
-            Employee employee = new Employee()
-            {
-                Name = request.Name,
-                Age = request.Age,
-                Address = request.Address,
-                MobileNumber = request.MobileNumber,
-                EmployeeDetails=request.EmployeeDetails,
-                employeeAddresses=request.EmployeeAddress
-            };
-            return await _employeeRepository.AddEmployeeAsync(employee);
+            EmployeeDTO employee = request.Employee; // Access the EmployeeDTO directly from the command
+            EmployeeDTO addedEmployee = await _employeeRepository.AddEmployeeAsync(employee);
+            return addedEmployee; // No need to map again, since it's already an EmployeeDTO
         }
     }
 }

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace MappingDemo.Handler
 {
-    public class GetEmployeeListQuery:IRequest<List<Employee>>
+    public class GetEmployeeListQuery:IRequest<List<EmployeeDTO>>
     {
     }
 }

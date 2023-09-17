@@ -1,4 +1,5 @@
-﻿using MappingDemo.Command;
+﻿using AutoMapper;
+using MappingDemo.Command;
 using MappingDemo.Handler;
 using MappingDemo.Models;
 using MediatR;
@@ -11,13 +12,15 @@ namespace MappingDemo.Controllers
     public class EmployeeController : ControllerBase
     {
         private IMediator _mediator;
-        public EmployeeController(IMediator mediator)
+        private IMapper _mapper;
+        public EmployeeController(IMediator mediator,IMapper mapper)
         {
             _mediator = mediator; 
+            _mapper = mapper;
         }
         [HttpGet]
         [Route("GetEmployees")]
-        public async Task<IEnumerable<Employee>> GetEmployees()
+        public async Task<IEnumerable<EmployeeDTO>> GetEmployees()
         {
             var employeelist =await _mediator.Send(new GetEmployeeListQuery());
             return employeelist;
@@ -30,11 +33,13 @@ namespace MappingDemo.Controllers
         }
         [HttpPost]
         [Route("AddEmployees")]
-        public async Task<Employee> AddEmployee(Employee employee)
+        public async Task<EmployeeDTO> AddEmployee(EmployeeDTO employee)
         {
-            var employeeReturn = await _mediator.Send(new CreateEmployeeCommand(employee.Name,employee.Age,employee.Address,employee.MobileNumber,employee.EmployeeDetails.ToList(),employee.employeeAddresses.ToList()));
-            return employeeReturn;
+            var createEmployeeCommand = new CreateEmployeeCommand(employee); // Pass the employee directly to the constructor
+            var employeeReturn = await _mediator.Send(createEmployeeCommand);
+            return _mapper.Map<EmployeeDTO>(employeeReturn);
         }
+
         [HttpPost]
         [Route("UpdateEmployees")]
         public async Task<int> UpdateEmployee(Employee employee)

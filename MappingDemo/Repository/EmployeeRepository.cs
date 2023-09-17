@@ -1,4 +1,5 @@
-﻿using MappingDemo.Data;
+﻿using AutoMapper;
+using MappingDemo.Data;
 using MappingDemo.Interface;
 using MappingDemo.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,16 +9,52 @@ namespace MappingDemo.Repository
     public class EmployeeRepository : IEmployee
     {
         private readonly ApplicationDbContext _dataContext;
-        public EmployeeRepository(ApplicationDbContext applicationDbContext)
+        private readonly IMapper _mappers;
+        public EmployeeRepository(ApplicationDbContext applicationDbContext,IMapper mapper)
         {
             _dataContext = applicationDbContext;
+            _mappers = mapper;
         }
-        public async Task<Employee> AddEmployeeAsync(Employee employee)
+        public async Task<EmployeeDTO> AddEmployeeAsync(EmployeeDTO employeeDto)
         {
+            //Employee employee = _mappers.Map<EmployeeDTO, Employee>(employeeDto);
+            //var result = _dataContext.Employees.Add(employee);
+            //await _dataContext.SaveChangesAsync();
+            //Employee addedEmployee = result.Entity;
+            //return _mappers.Map<Employee, EmployeeDTO>(addedEmployee);
+            Employee employee = _mappers.Map<EmployeeDTO, Employee>(employeeDto);
+
+            // Handle null or empty EmployeeDetails
+            if (employeeDto.employeeDetailsDTOs != null && employeeDto.employeeDetailsDTOs.Any())
+            {
+                foreach (var detailsDto in employeeDto.employeeDetailsDTOs)
+                {
+                    var details = _mappers.Map<EmployeeDetailsDTO, EmployeeDetails>(detailsDto);
+                    employee.EmployeeDetails.Add(details);
+                }
+            }
+
+            // Handle null or empty EmployeeAddress
+            if (employeeDto.employeeAddressDTOs != null && employeeDto.employeeAddressDTOs.Any())
+            {
+                foreach (var addressDto in employeeDto.employeeAddressDTOs)
+                {
+                    var address = _mappers.Map<EmployeeAddressDTO, EmployeeAddress>(addressDto);
+                    employee.employeeAddresses.Add(address);
+                }
+            }
+
             var result = _dataContext.Employees.Add(employee);
             await _dataContext.SaveChangesAsync();
-            return result.Entity;
+            //  Employee addedEmployee = result.Entity;
+            EmployeeDTO addedEmployeeDto = _mappers.Map<Employee, EmployeeDTO>(result.Entity);
+            addedEmployeeDto.employeeDetailsDTOs = employeeDto.employeeDetailsDTOs;
+            addedEmployeeDto.employeeAddressDTOs = employeeDto.employeeAddressDTOs;
+
+            return addedEmployeeDto;
+
         }
+
 
         public async Task<int> DeleteEmployeeAsync(int Id)
         {
@@ -33,10 +70,15 @@ namespace MappingDemo.Repository
             return 0;
         }
 
-        public async Task<List<Employee>> GetAll()
+        public async Task<List<EmployeeDTO>> GetAll()
         {
-            var filterdata = await _dataContext.Employees.Include(e => e.employeeAddresses).Include(e => e.EmployeeDetails).ToListAsync();
-            return filterdata;
+            var employees = await _dataContext.Employees
+       .Include(e => e.employeeAddresses)
+       .Include(e => e.EmployeeDetails)
+       .ToListAsync();
+
+            var employeeDTOs = _mappers.Map<List<Employee>, List<EmployeeDTO>>(employees);
+            return employeeDTOs;
         }
 
         public async Task<Employee> GetById(int Id)
